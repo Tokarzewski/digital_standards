@@ -1,6 +1,6 @@
 from math import log, sqrt, prod, e
 import numpy as np
-from scipy.interpolate import CubicSpline, interp2d, RBFInterpolator, interpn
+from scipy.interpolate import CubicSpline, interp2d, interpn
 
 
 # ISO 11855-2:2021 FUNCTIONS
@@ -46,28 +46,28 @@ def q_des(h_t, t_S_m, t_i):
 def deltat_H(t_V, t_R, t_i):
     """Function A.1 - Temperature difference
     between heating fluid and room."""
-    return t_V - t_R / log((t_V - t_i) / (t_R - t_i))
+    return (t_V - t_R) / log((t_V - t_i) / (t_R - t_i))
 
 
 # Function A.2 = Function 5
 
 
-def q6(B, a_B, a_W, a_U, a_D, m_W, m_U, m_D, deltat_H):
+def q6(a_B, a_W, a_U, a_D, m_W, m_U, m_D, deltat_H, B=6.7):
     """Function A.3 - Heat flux for system types A, C, H, I, J."""
     a_i = [a_B, a_W, a_U, a_D]
     m_i = [1, m_W, m_U, m_D]
     return q5(B, a_i, m_i, deltat_H)
 
 
-def a_B1(alfa, lambda_E, R_lambda_B):
-    """Function A.4 - Surface covering factor for function A.3."""
+def a_B1(alfa, k_E, R_k_B):
+    """Function A.4 - Surface covering factor for system types A, C, H, I, J."""
     s_u_0 = 0.045
-    lambda_u_0 = 1
-    return (1 / alfa + s_u_0 / lambda_u_0) / (1 / alfa + s_u_0 / lambda_E + R_lambda_B)
+    k_u_0 = 1
+    return (1 / alfa + s_u_0 / k_u_0) / (1 / alfa + s_u_0 / k_E + R_k_B)
 
 
-def m_W(W):
-    """Function A.5 - Exponent m_W."""
+def m_W1(W):
+    """Function A.5 - Exponent m_W for system types A, B, C, H, I, J."""
     return 1 - W / 0.075
 
 
@@ -78,7 +78,7 @@ def m_U(s_u):
 
 def m_D(D):
     """Function A.7 - Exponent m_D."""
-    return 250 * (D - 0.020)
+    return 250 * (D - 0.02)
 
 
 def K_H1(a_i, m_i, s_u, s_u_star, lambda_E):
@@ -96,22 +96,25 @@ def q8(q_0375, W):
     return q_0375 * 0.375 / W
 
 
-def q9(B, a_B, a_W, a_U, a_WL, a_K, m_W, deltat_H):
+def q9(a_B, a_W, a_U, a_WL, a_K, m_W, deltat_H):
     """Function A.11 - Heat flux for system type B."""
+    B=6.5
     a_i = [a_B, a_W, a_U, a_WL, a_K]
     m_i = [1, m_W, 1, 1, 1]
     return q5(B, a_i, m_i, deltat_H)
 
 
-def a_B1(B, a_U, a_W, m_W, a_WL, a_K, R_lambda_B, W):
+def a_B2(a_U, a_W, m_W, a_WL, a_K, R_k_B, W, B=6.5):
     """Function A.12 - Surface covering factor for system type B."""
     return 1 / (
-        1 + B * a_U * a_W**m_W * a_WL * a_K * R_lambda_B * (1 + 0.44 * sqrt(W))
+        1 + B * a_U * a_W**m_W * a_WL * a_K * R_k_B * (1 + 0.44 * sqrt(W))
     )
 
 
-def a_U(alfa, s_u, k_E, s_u_0=0.045, k_u_o=1):
+def a_U2(alfa, s_u, k_E):
     """Function A.13 - Covering factor for system type B."""
+    s_u_0=0.045
+    k_u_o=1
     return (1 / alfa + s_u_0 / k_u_o) / (1 / alfa + s_u / k_E)
 
 
@@ -132,7 +135,7 @@ def K_WL(s_WL, k_WL, b_u, s_u, k_E):
 
 
 def a_WL1(a_W, a_0, L_WL, W):
-    """Function A.16 - Corrected heat conduction device factor"""
+    """Function A.16 - Corrected heat conduction device factor for system type B."""
     x = L_WL / W
     return a_W - (a_W - a_0) * (1 - 3.2 * x + 3.4 * x * x - 1.2 * x * x * x)
 
@@ -142,8 +145,8 @@ def q10(a_B, a_U, deltat_H, B=6.5):
     return B * a_B * 1.06 * a_U * deltat_H
 
 
-def a_B(B, a_U, a_T, m_T, R_k_B):
-    """Function A.18 - Surface covering factor"""
+def a_B3(B, a_U, a_T, m_T, R_k_B):
+    """Function A.18 - Surface covering factor for system type D."""
     return 1 / (1 + B * a_U * a_T**m_T * R_k_B)
 
 
@@ -226,7 +229,7 @@ def deltaR_h(alfa):
     return 1 / alfa - 1 / 10.8
 
 
-def a_W(R_k_B):
+def a_W1(R_k_B):
     """Table A.2 - Pipe spacing factor for system types A, C, H, I, J."""
     x_R_k_B = [0.0, 0.05, 0.1, 0.15]
     y_a_W = [1.23, 1.188, 1.156, 1.134]
@@ -244,7 +247,7 @@ def a_W(R_k_B):
     return cs(R_k_B)
 
 
-def a_U(R_k_B, W):
+def a_U1(R_k_B, W):
     """Table A.3 - Covering factor for system types A, C, H, I, J."""
 
     x_R_k_B = [0.0, 0.05, 0.1, 0.15]
@@ -359,7 +362,7 @@ def n_G2(s_u, W):
         return 0.0
 
 
-def a_W(s_u, k_E):
+def a_W2(s_u, k_E):
     """Table A.9 - Pipe spacing factor for system type B."""
     x_s_u_k_E = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.08, 0.1, 0.15, 0.18]
     y_a_W = [1.103, 1.1, 1.097, 1.094, 1.091, 1.088, 1.082, 1.075, 1.064, 1.059]
@@ -455,6 +458,7 @@ def a_WL2(K_WL, W, D):
     ]
     points = (x_K_WL, y_W, z_D)
     point = np.array([K_WL, W, D])
+    # todo change to spline quadratic interpolation 
     return float(interpn(points, a_WL, point, method="linear"))
 
 
@@ -477,7 +481,7 @@ def a_WL3(K_WL, W, D):
             * ((a_WL_KL_inf - 1) / (a_WL_KL_inf - a_WL_KL_0)) ** K_WL
         )
 
-    else:
+    else: # 0.5 <= K_WL <= 1 
         x_K_WL = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
         y_W = [0.05, 0.075, 0.1, 0.15, 0.2, 0.225, 0.3, 0.375, 0.45]
         z_a_WL = [
