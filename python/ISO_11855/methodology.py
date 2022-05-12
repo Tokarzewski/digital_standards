@@ -22,7 +22,7 @@ def q_ACHIJ(self):
         return q
     else:
         q = f.q6(
-            a_B=f.a_B1(self.alfa, k_E, R_k_B),
+            a_B=f.a_B1(self.alfa, k_E, self.R_k_B),
             a_W=f.a_W1(self.R_k_B),
             a_U=f.a_U1(self.R_k_B, W=0.375),
             a_D=f.a_D(self.R_k_B, W=0.375),
@@ -31,7 +31,7 @@ def q_ACHIJ(self):
             m_D=f.m_D(self.D),
             deltat_H=self.deltat_H,
         )
-        q = f.q8(q_0375=q, W=W)
+        q = f.q8(q_0375=q, W=self.W)
         return q
 
 
@@ -78,25 +78,25 @@ def q(self):
 @dataclass
 class EmbeddedRadiantSystem:
     system_type: str = "A"  # System type (A, B, C, D, H, I, J)
-    case_of_application: str = "Floor heating"
+    case_of_application: str = "floor heating"
 
     D: float = 0.016  # External diameter of pipe, including sheating where used
     W: float = 0.10  # Pipe spacing [m]
     s_u: float = 0.02  # Thickness of layer above the pipe [m]
     R_k_B: float = 0.05  # Thermal resistance of the floor covering [m2K/W]
     k_E: float = 1.0  # Thermal conductivity of screed [W/mK]
-    psi: float = 0.05  # Volume ratio of the attachement studs in the screed
-    k_W: float = 0.5  # Thermal conductivity of the attachements studs
+    psi: float = 0.05  # Volume ratio of the attachement studs in the screed 
+    k_W: float = 0.5  # Thermal conductivity of the attachements studs [W/mK]
     s_WL: float = 0.002  # Thickness of the heat conducting material [m]
     k_WL: float = 0.35  # Thermal conductivity of the heat conducting material [W/mK]
-    L_WL: float = 1.0  # Width of heat conducting device
+    L_WL: float = 1.0  # Width of heat conducting device [m]
 
     t_i: float = 20.0  # Design indoor temperature [*C]
     t_V: float = 40.0  # Supply temperature of heating or cooling medium [*C]
     t_R: float = 35.0  # Return temperature of heating or cooling medium [*C]
-    deltat_H: float = field(init=False)  # Medium differential temperature
-    alfa: float = field(init=False)
-    q: float = field(init=False)
+    deltat_H: float = field(init=False)  # Medium differential temperature [K]
+    alfa: float = field(init=False) # Heat exchange coefficient [W/m2K]
+    q: float = field(init=False) # Heat flux [W/m2]
 
     def __post_init__(self) -> None:
         self.deltat_H = f.deltat_H(self.t_V, self.t_R, self.t_i)

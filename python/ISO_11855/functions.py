@@ -561,14 +561,13 @@ def n_G3(K_WL, W):
 def alfa(case_of_application="Floor heating"):
     """Table A.20 - Additional thermal transfer resistance."""
     switcher = {
-        "Floor heating": 10.8,
-        "Wall heating": 8,
-        "Ceiling heating": 6.5,
-        "Floor cooling": 6.5,
-        "Wall cooling": 8,
-        "Ceiling cooling": 10.8,
+        "floor heating": 10.8,
+        "wall heating": 8,
+        "ceiling heating": 6.5,
+        "floor cooling": 6.5,
+        "wall cooling": 8,
+        "ceiling cooling": 10.8,
     }
-    return switcher.get(case_of_application)
-
+    return switcher.get(case_of_application.lower())
 
 # ISO 11855-3:2021 FUNCTIONS
