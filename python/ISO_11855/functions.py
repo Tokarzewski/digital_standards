@@ -52,8 +52,9 @@ def deltat_H(t_V, t_R, t_i):
 # Function A.2 = Function 5
 
 
-def q6(a_B, a_W, a_U, a_D, m_W, m_U, m_D, deltat_H, B=6.7):
+def q6(a_B, a_W, a_U, a_D, m_W, m_U, m_D, deltat_H):
     """Function A.3 - Heat flux for system types A, C, H, I, J."""
+    B = 6.7
     a_i = [a_B, a_W, a_U, a_D]
     m_i = [1, m_W, m_U, m_D]
     return q5(B, a_i, m_i, deltat_H)
@@ -66,7 +67,7 @@ def a_B1(alfa, k_E, R_k_B):
     return (1 / alfa + s_u_0 / k_u_0) / (1 / alfa + s_u_0 / k_E + R_k_B)
 
 
-def m_W1(W):
+def m_W(W):
     """Function A.5 - Exponent m_W for system types A, B, C, H, I, J."""
     return 1 - W / 0.075
 
@@ -98,7 +99,7 @@ def q8(q_0375, W):
 
 def q9(a_B, a_W, a_U, a_WL, a_K, m_W, deltat_H):
     """Function A.11 - Heat flux for system type B."""
-    B=6.5
+    B = 6.5
     a_i = [a_B, a_W, a_U, a_WL, a_K]
     m_i = [1, m_W, 1, 1, 1]
     return q5(B, a_i, m_i, deltat_H)
@@ -106,15 +107,13 @@ def q9(a_B, a_W, a_U, a_WL, a_K, m_W, deltat_H):
 
 def a_B2(a_U, a_W, m_W, a_WL, a_K, R_k_B, W, B=6.5):
     """Function A.12 - Surface covering factor for system type B."""
-    return 1 / (
-        1 + B * a_U * a_W**m_W * a_WL * a_K * R_k_B * (1 + 0.44 * sqrt(W))
-    )
+    return 1 / (1 + B * a_U * a_W**m_W * a_WL * a_K * R_k_B * (1 + 0.44 * sqrt(W)))
 
 
 def a_U2(alfa, s_u, k_E):
-    """Function A.13 - Covering factor for system type B."""
-    s_u_0=0.045
-    k_u_o=1
+    """Function A.13 - Covering factor for system types B and D."""
+    s_u_0 = 0.045
+    k_u_o = 1
     return (1 / alfa + s_u_0 / k_u_o) / (1 / alfa + s_u / k_E)
 
 
@@ -134,20 +133,22 @@ def K_WL(s_WL, k_WL, b_u, s_u, k_E):
     return (s_WL * k_WL + b_u * s_u * k_E) * 8
 
 
-def a_WL1(a_W, a_0, L_WL, W):
+def a_WL1(a_WL, a_0, L_WL, W):
     """Function A.16 - Corrected heat conduction device factor for system type B."""
     x = L_WL / W
-    return a_W - (a_W - a_0) * (1 - 3.2 * x + 3.4 * x * x - 1.2 * x * x * x)
+    return a_WL - (a_WL - a_0) * (1 - 3.2 * x + 3.4 * x * x - 1.2 * x * x * x)
 
 
-def q10(a_B, a_U, deltat_H, B=6.5):
+def q10(a_B, a_U, deltat_H):
     """Function A.17 - Heat flux for system type D."""
+    B = 6.5
     return B * a_B * 1.06 * a_U * deltat_H
 
 
-def a_B3(B, a_U, a_T, m_T, R_k_B):
+def a_B3(a_U, R_k_B):
     """Function A.18 - Surface covering factor for system type D."""
-    return 1 / (1 + B * a_U * a_T**m_T * R_k_B)
+    B = 6.5
+    return 1 / (1 + B * a_U * 1.06 * R_k_B)
 
 
 def q_G1(fi, B_G, deltat_H, n_G):
@@ -458,7 +459,7 @@ def a_WL2(K_WL, W, D):
     ]
     points = (x_K_WL, y_W, z_D)
     point = np.array([K_WL, W, D])
-    # todo change to spline quadratic interpolation 
+    # todo change to spline quadratic interpolation
     return float(interpn(points, a_WL, point, method="linear"))
 
 
@@ -481,7 +482,7 @@ def a_WL3(K_WL, W, D):
             * ((a_WL_KL_inf - 1) / (a_WL_KL_inf - a_WL_KL_0)) ** K_WL
         )
 
-    else: # 0.5 <= K_WL <= 1 
+    else:  # 0.5 <= K_WL <= 1
         x_K_WL = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
         y_W = [0.05, 0.075, 0.1, 0.15, 0.2, 0.225, 0.3, 0.375, 0.45]
         z_a_WL = [
