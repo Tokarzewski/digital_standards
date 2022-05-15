@@ -2,37 +2,55 @@ import functions as f
 from dataclasses import dataclass, field
 
 
+def B_0(self):
+    if self.system_type in "ACHIJ":
+        return 6.7
+    elif self.system_type in "BD":
+        return 6.5
+    else:
+        return "There is no system type: ", self.system_type
+
+
 def q_ACHIJ(self):
     """Heat transfer coefficient for system types A, C, H, I, J."""
+
     if 0.05 <= self.psi <= 0.15:
         k_E = f.k_E_prim(self.psi, self.k_E, self.k_W)
     else:
         k_E = self.k_E
+
     if self.W <= 0.375:
-        q = f.q6(
-            a_B=f.a_B1(self.alfa, k_E, self.R_k_B),
-            a_W=f.a_W1(self.R_k_B),
-            a_U=f.a_U1(self.R_k_B, self.W),
-            a_D=f.a_D(self.R_k_B, self.W),
-            m_W=f.m_W(self.W),
-            m_U=f.m_U(self.s_u),
-            m_D=f.m_D(self.D),
-            deltat_H=self.deltat_H,
-        )
-        return q
+        a_B = f.a_B1(self.alfa, k_E, self.R_k_B)
+        a_W = f.a_W1(self.R_k_B)
+        a_U = f.a_U1(self.R_k_B, self.W)
+        a_D = f.a_D(self.R_k_B, self.W)
+        m_W = f.m_W(self.W)
+        m_U = f.m_U(self.s_u)
+        m_D = f.m_D(self.D)
+
+        a_i = [a_B, a_W, a_U, a_D]
+        m_i = [1, m_W, m_U, m_D]
+
+        B = f.B1(self.B_0, a_i, m_i, self.W, self.k_R, self.d_a, self.s_R)
+
+        return f.q5(B, a_i, m_i, self.deltat_H)
     else:
-        q = f.q6(
-            a_B=f.a_B1(self.alfa, k_E, self.R_k_B),
-            a_W=f.a_W1(self.R_k_B),
-            a_U=f.a_U1(self.R_k_B, W=0.375),
-            a_D=f.a_D(self.R_k_B, W=0.375),
-            m_W=f.m_W(W=0.375),
-            m_U=f.m_U(self.s_u),
-            m_D=f.m_D(self.D),
-            deltat_H=self.deltat_H,
-        )
-        q = f.q8(q_0375=q, W=self.W)
-        return q
+        a_B = f.a_B1(self.alfa, k_E, self.R_k_B)
+        a_W = f.a_W1(self.R_k_B)
+        a_U = f.a_U1(self.R_k_B, W=0.375)
+        a_D = f.a_D(self.R_k_B, W=0.375)
+        m_W = f.m_W(W=0.375)
+        m_U = f.m_U(self.s_u)
+        m_D = f.m_D(self.D)
+
+        a_i = [a_B, a_W, a_U, a_D]
+        m_i = [1, m_W, m_U, m_D]
+
+        B = f.B1(self.B_0, a_i, m_i, self.W, self.k_R, self.d_a, self.s_R)
+
+        q_0375 = f.q5(B, a_i, m_i, self.deltat_H)
+
+        return f.q8(q_0375, self.W)
 
 
 def q_B(self):
@@ -53,15 +71,26 @@ def q_B(self):
         a_WL = f.a_WL1(a_WL, a_0, self.L_WL, self.W)
 
     a_B = f.a_B2(a_U, a_W, m_W, a_WL, a_K, self.R_k_B, self.W)
+    
+    a_i = [a_B, a_W, a_U, a_WL, a_K]
+    m_i = [1, m_W, 1, 1, 1]
 
-    return f.q9(a_B, a_W, a_U, a_WL, a_K, m_W, self.deltat_H)
+    B = f.B1(self.B_0, a_i, m_i, self.W, self.k_R, self.d_a, self.s_R)
+
+    return f.q5(B, a_i, m_i, self.deltat_H)
 
 
 def q_D(self):
     """Heat transfer coefficient for system type D."""
     a_U = f.a_U2(self.alfa, self.s_u, self.k_E)
     a_B = f.a_B3(a_U, self.R_k_B)
-    return f.q10(a_B, a_U, self.deltat_H)
+    
+    a_i = [a_B, 1.06, a_U]
+    m_i = [1, 1, 1]
+    
+    B = f.B1(self.B_0, a_i, m_i, self.W, self.k_R, self.d_a, self.s_R)
+
+    return f.q5(B, a_i, m_i, self.deltat_H)
 
 
 def q(self):
@@ -78,30 +107,41 @@ def q(self):
 @dataclass
 class EmbeddedRadiantSystem:
     system_type: str = "A"  # System type (A, B, C, D, H, I, J)
-    case_of_application: str = "floor heating"
+    B_0: float = field(init=False)  # Coefficient depending on the system [W/m2K]
 
-    D: float = 0.016  # External diameter of pipe, including sheating where used
+    case_of_application: str = "floor heating"
+    alfa: float = field(init=False)  # Heat exchange coefficient [W/m2K]
+
+    d_a: float = 0.016  # External diameter of pipe [m]
+    d_M: float = 0.018  # External diameter of sheating [m]
+    D: float = 0.016  # External diameter of pipe, including sheating where used [m]
     W: float = 0.10  # Pipe spacing [m]
+    s_R: float = 0.002  # Pipe wall thickness [m]
+    k_R: float = 0.35  # Thermal conductivity of the heat conducting material [W/mK]
     s_u: float = 0.02  # Thickness of layer above the pipe [m]
-    R_k_B: float = 0.05  # Thermal resistance of the floor covering [m2K/W]
-    k_E: float = 1.0  # Thermal conductivity of screed [W/mK]
-    psi: float = 0.05  # Volume ratio of the attachement studs in the screed 
-    k_W: float = 0.5  # Thermal conductivity of the attachements studs [W/mK]
+
     s_WL: float = 0.002  # Thickness of the heat conducting material [m]
     k_WL: float = 0.35  # Thermal conductivity of the heat conducting material [W/mK]
     L_WL: float = 1.0  # Width of heat conducting device [m]
+
+    R_k_B: float = 0.05  # Thermal resistance of the floor covering [m2K/W]
+    k_E: float = 1.0  # Thermal conductivity of screed [W/mK]
+    psi: float = 0.05  # Volume ratio of the attachement studs in the screed
+    k_W: float = 0.5  # Thermal conductivity of the attachements studs [W/mK]
 
     t_i: float = 20.0  # Design indoor temperature [*C]
     t_V: float = 40.0  # Supply temperature of heating or cooling medium [*C]
     t_R: float = 35.0  # Return temperature of heating or cooling medium [*C]
     deltat_H: float = field(init=False)  # Medium differential temperature [K]
-    alfa: float = field(init=False) # Heat exchange coefficient [W/m2K]
-    q: float = field(init=False) # Heat flux [W/m2]
+
+    q: float = field(init=False)  # Heat flux [W/m2]
 
     def __post_init__(self) -> None:
-        self.deltat_H = f.deltat_H(self.t_V, self.t_R, self.t_i)
+        self.B_0 = B_0(self)
         self.alfa = f.alfa(self.case_of_application)
+        self.deltat_H = f.deltat_H(self.t_V, self.t_R, self.t_i)
         self.q = q(self)
+
 
 UFH_A = EmbeddedRadiantSystem(system_type="A")
 UFH_B = EmbeddedRadiantSystem(system_type="B")
@@ -109,3 +149,4 @@ UFH_D = EmbeddedRadiantSystem(system_type="D")
 
 for UFH in [UFH_A, UFH_B, UFH_D]:
     print(UFH.system_type, round(UFH.q, 2), "W/m2")
+    # print(UFH)

@@ -1,4 +1,4 @@
-from math import log, sqrt, prod, e
+from math import log, sqrt, prod, e, pi
 import numpy as np
 from scipy.interpolate import CubicSpline, interp2d, interpn
 
@@ -26,8 +26,8 @@ def q4(t_S_m, t_i):
     return 7 * abs(t_S_m - t_i)
 
 
-def power_product(list_a, list_m):
-    return prod([a**m for a, m in zip(list_a, list_m)])
+def power_product(a_i, m_i) -> float:
+    return prod([a**m for a, m in zip(a_i, m_i)])
 
 
 def q5(B, a_i, m_i, deltat_H):
@@ -52,9 +52,8 @@ def deltat_H(t_V, t_R, t_i):
 # Function A.2 = Function 5
 
 
-def q6(a_B, a_W, a_U, a_D, m_W, m_U, m_D, deltat_H):
+def q6(a_B, a_W, a_U, a_D, m_W, m_U, m_D, deltat_H, B=6.7):
     """Function A.3 - Heat flux for system types A, C, H, I, J."""
-    B = 6.7
     a_i = [a_B, a_W, a_U, a_D]
     m_i = [1, m_W, m_U, m_D]
     return q5(B, a_i, m_i, deltat_H)
@@ -97,9 +96,8 @@ def q8(q_0375, W):
     return q_0375 * 0.375 / W
 
 
-def q9(a_B, a_W, a_U, a_WL, a_K, m_W, deltat_H):
+def q9(a_B, a_W, a_U, a_WL, a_K, m_W, deltat_H, B=6.5):
     """Function A.11 - Heat flux for system type B."""
-    B = 6.5
     a_i = [a_B, a_W, a_U, a_WL, a_K]
     m_i = [1, m_W, 1, 1, 1]
     return q5(B, a_i, m_i, deltat_H)
@@ -139,10 +137,12 @@ def a_WL1(a_WL, a_0, L_WL, W):
     return a_WL - (a_WL - a_0) * (1 - 3.2 * x + 3.4 * x * x - 1.2 * x * x * x)
 
 
-def q10(a_B, a_U, deltat_H):
+def q10(a_B, a_U, deltat_H, B=6.5):
     """Function A.17 - Heat flux for system type D."""
-    B = 6.5
-    return B * a_B * 1.06 * a_U * deltat_H
+    a_i = [a_B, 1.06, a_U]
+    m_i = [1, 1, 1]
+    return q5(B, a_i, m_i, deltat_H)
+    # return B * a_B * 1.06 * a_U * deltat_H
 
 
 def a_B3(a_U, R_k_B):
@@ -185,7 +185,48 @@ def f_G(s_u, W, q_G_max, q_G_0375):
         return 1
 
 
-# Functions A.25 - A.27
+def q_G3(a_WL, a_WL_W, q_G_W):
+    """Function A.25 - Correction formula for system type B."""
+    return a_WL / a_WL_W * q_G_W
+
+
+def B1(B_0, a_i, m_i, W, k_R, d_a, s_R):
+    """
+    Function A.26 - Influence of material and thickness factor without sheating.
+    Arguments:
+    B_0 - default influence factor depending on the system type,
+    W - pipe spacing
+    k_R - pipe material,
+    s_R - pipe wall thickness.
+    """
+    k_R_0 = 0.35
+    s_R_0 = 0.002
+    x = 1 / B_0 + 1.1 / pi * power_product(a_i, m_i) * W * (
+        1 / (2 * k_R) * log(d_a / (d_a - 2 * s_R))
+        - 1 / (2 * k_R_0) * log(d_a / (d_a - 2 * s_R_0))
+    )
+    return x**-1
+
+
+def B2(B_0, a_i, m_i, W, k_R, d_a, s_R, k_M, d_M):
+    """
+    Function A.27 - Influence of material and thickness factor with sheating.
+    Arguments:
+    B_0 - default influence factor depending on the system type,
+    W - pipe spacing
+    k_R - pipe material,
+    s_R - pipe wall thickness,
+    k_M - sheating material,
+    d_M - sheating thickness.
+    """
+    k_R_0 = 0.35
+    s_R_0 = 0.002
+    x = 1 / B_0 + 1.1 / pi * power_product(a_i, m_i) * W * (
+        1 / (2 * k_M) * log(d_M / d_a)
+        + 1 / (2 * k_R) * log(d_a / (d_a - 2 * s_R))
+        - 1 / (2 * k_R_0) * log(d_M / (d_M - 2 * s_R_0))
+    )
+    return x**-1
 
 
 def k_E_prim(psi, k_E, k_W):
@@ -569,5 +610,6 @@ def alfa(case_of_application="Floor heating"):
         "ceiling cooling": 10.8,
     }
     return switcher.get(case_of_application.lower())
+
 
 # ISO 11855-3:2021 FUNCTIONS
