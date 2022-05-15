@@ -1,4 +1,4 @@
-from math import log, sqrt, prod, e, pi
+from math import exp, log, sqrt, prod, e, pi
 import numpy as np
 from scipy.interpolate import CubicSpline, interp2d, interpn
 
@@ -205,7 +205,7 @@ def B1(B_0, a_i, m_i, W, k_R, d_a, s_R):
         1 / (2 * k_R) * log(d_a / (d_a - 2 * s_R))
         - 1 / (2 * k_R_0) * log(d_a / (d_a - 2 * s_R_0))
     )
-    return x**-1
+    return 1 / x
 
 
 def B2(B_0, a_i, m_i, W, k_R, d_a, s_R, k_M, d_M):
@@ -226,7 +226,7 @@ def B2(B_0, a_i, m_i, W, k_R, d_a, s_R, k_M, d_M):
         + 1 / (2 * k_R) * log(d_a / (d_a - 2 * s_R))
         - 1 / (2 * k_R_0) * log(d_M / (d_M - 2 * s_R_0))
     )
-    return x**-1
+    return 1 / x
 
 
 def k_E_prim(psi, k_E, k_W):
@@ -257,7 +257,7 @@ def q_U2(q, R_o, R_u):
 
 
 def K_H2(K_H_Floor, deltaR_alfa, R_k_B, K_H_Floor_star, R_k_B_star=0.15):
-    """Function A.33 - Equivalent heat transmission coefficient"""
+    """Function A.33 - Equivalent heat transmission coefficient."""
     return K_H_Floor / (
         1 + ((deltaR_alfa + R_k_B) / R_k_B_star) * (K_H_Floor / K_H_Floor_star - 1)
     )
@@ -500,7 +500,7 @@ def a_WL2(K_WL, W, D):
     ]
     points = (x_K_WL, y_W, z_D)
     point = np.array([K_WL, W, D])
-    # todo change to spline quadratic interpolation
+    # xyz change linear interpolation to quadratic spline
     return float(interpn(points, a_WL, point, method="linear"))
 
 
@@ -600,7 +600,10 @@ def n_G3(K_WL, W):
 
 
 def alfa(case_of_application="Floor heating"):
-    """Table A.20 - Additional thermal transfer resistance."""
+    """
+    Table A.20 - Additional thermal transfer resistance.
+    This function should not be used for calculating q.
+    """
     switcher = {
         "floor heating": 10.8,
         "wall heating": 8,
@@ -611,5 +614,90 @@ def alfa(case_of_application="Floor heating"):
     }
     return switcher.get(case_of_application.lower())
 
+
+def R_t1(R_z, R_w, R_r, R_x):
+    """Function B.1 - Resistance between supply temperature t_v
+    and average temperature of conductive later t_c."""
+    return R_z + R_w + R_r + R_x
+
+
+def R_t2(R_w, R_r, R_x, U_1, U_2, m_H_sp, c):
+    """Function B.2 - Resistance between supply temperature t_v
+    and average temperature of conductive later t_c."""
+    U = 1 / (U_1 + U_2)
+    mc = m_H_sp * c
+    return 1 / mc * (1 - exp(-1 / ((R_w + R_r + R_x + U) * mc))) - U
+
+
+def q11(R_1, R_2, R_t, t_1, t_2, t_v):
+    """
+    Function B.3 - Steady state heat flux into the adjacent spaces.
+    """
+    return (R_t * (t_2 - t_1) + R_2 * (t_v - t_1)) / (R_1 * R_2 + R_1 * R_t + R_2 * R_t)
+
+
+def q12(R_1, R_2, R_t, t_1, t_2, t_v):
+    """
+    Function B.4 - Steady state heat flux into the adjacent spaces.
+    """
+    return (R_t * (t_1 - t_2) + R_1 * (t_v - t_2)) / (R_1 * R_2 + R_1 * R_t + R_2 * R_t)
+
+
+def K_H3(R_w, R_r, R_x, R_i):
+    """Function B.5 - Equivalent heat transmission coefficient for system E and F."""
+    return 1 / (R_w + R_r + R_x + R_i)
+
+
+def R_w1(W, d_a, s_r, m_H_sp, l):
+    """Function B.6 - Resistance w for system E."""
+    return W**0.13/8*pi * ((d_a-2*s_r)/(m_H_sp*l))**0.87
+
+def R_r1(W, d_a, s_r, k_r):
+    """Function B.7 - Resistance r of pipe wall for system E."""
+    return W * log(d_a/(d_a-2*s_r)) / (2*pi*k_r)
+
+def R_x1(W, d_a, k_b):
+    """Function B.8 - Resistance x between pipe outside wall 
+    and conductive later for system E."""
+    return W * log(W/(pi*d_a)) / (2*pi*k_b)
+
+
+def U_i(h_i, s_i, k_b):
+    """Function B.9 - Heat transfer coefficient."""
+    return 1 / (1/h_i + s_i/k_b)
+
+
+def R_i(U_i):
+    """Function B.10 - Resistance from function B.9, B.14 or B.15."""
+    return 1/U_i
+
+
+def R_w2(W, k_w, m_H_sp, c):
+    """Function B.11 - Resistance w for system F."""
+    return W/(pi*k_w) * (49.03 + 16.68 / pi * m_H_sp*c*W/k_w) ** (-1/3)
+
+
+def R_r2(W, d_a, s_r, k_r):
+    """Function B.12 - Resistance r of pipe wall for system F."""
+    return W * log(d_a/(d_a-2*s_r)) / (2*pi*k_r)
+
+
+def R_x2(W, d_a, k_l):
+    """Function B.13 - Resistance x between pipe outside wall 
+    and conductive later for system F."""
+    return W / 3* (W/(pi*d_a)) / (2*pi*k_l)
+
+
+def U_1(h_1, s_1, k_b, s_l, k_l):
+    """Function B.14 - Heat transfer coefficient 1 for system F."""
+    return 1 / (1/h_1 + s_1/k_b + s_l/(2*k_l))
+
+
+def U_2(h_2, s_l, k_l):
+    """Function B.15 - Heat transfer coefficient 2 for system F."""
+    return 1 / (1/h_2 + s_l/(2*k_l))
+
+
+# Function B.16 is equal to B.10
 
 # ISO 11855-3:2021 FUNCTIONS
