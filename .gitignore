@@ -119,4 +119,3 @@ settings.json
 
 #git
 requirements.txt
-.pre-commit-config.yaml
