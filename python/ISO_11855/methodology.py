@@ -8,7 +8,7 @@ def B_0(self):
     elif self.system_type in "BD":
         return 6.5
     else:
-        return "There is no system type: ", self.system_type
+        return "There is no B for system type: ", self.system_type
 
 
 def q_ACHIJ(self):
@@ -101,7 +101,7 @@ def q(self):
     elif self.system_type == "D":
         return q_D(self)
     else:
-        return "There is no system type: ", self.system_type
+        return "There is no q system type: ", self.system_type
 
 
 @dataclass
