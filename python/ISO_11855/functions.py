@@ -3,9 +3,6 @@ import numpy as np
 from scipy.interpolate import CubicSpline, interp2d, interpn
 
 
-# ISO 11855-2:2021 FUNCTIONS
-
-
 def q1(t_S_m, t_i):
     """Function 1 - Heat flux for floor heating and ceiling cooling."""
     return 8.92 * (t_S_m - t_i) ^ 1.1
@@ -701,5 +698,3 @@ def U_2(h_2, s_l, k_l):
 
 
 # Function B.16 is equal to B.10
-
-# ISO 11855-3:2021 FUNCTIONS

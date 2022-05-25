@@ -1,9 +1,6 @@
 from math import log
 
 
-# ISO 6946 FUNCTIONS
-
-
 def U1(R_tot):
     """Function 1 - Thermal transmittance."""
     return 1 / R_tot

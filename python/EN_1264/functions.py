@@ -1,9 +1,6 @@
 from math import log, sqrt
 
 
-# EN 1264-3 FUNCTIONS
-
-
 def deltat_H(t_V, t_R, t_i):
     """Function 1 - Temperature difference
     between heating fluid and room."""
