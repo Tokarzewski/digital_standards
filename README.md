@@ -1,6 +1,6 @@
 # Digital Standards
 
-The digital standards respository contains python modules with functions and methodologies from the ISO and EN standards related to the AEC industry.
+The digital standards respository contains python modules with functions and methodologies from the PN, EN and ISO standards related to the AEC industry.
 
 # DEPB - Digital Energy Performance of Buildings
 
