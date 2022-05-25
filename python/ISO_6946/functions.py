@@ -138,7 +138,7 @@ def R_a1(h_a, h_r):
     return 1 / (h_a + h_r)
 
 
-def h_a(deltaT, d, α):
+def h_a(deltaT, d, alfa):
     """Function D.2 - Conduction/convection coefficient."""
     if deltaT <= 5:
         # Table D.1
@@ -148,7 +148,7 @@ def h_a(deltaT, d, α):
         # Table D.2
         h_a_90 = 0.73 * deltaT ** (1 / 3)
         h_a_0 = 1.14 * deltaT ** (1 / 3)
-    return max(h_a_90 + (h_a_90 - h_a_0) * (α - 90) / 90, 0.025 / d)
+    return max(h_a_90 + (h_a_90 - h_a_0) * (alfa - 90) / 90, 0.025 / d)
 
 
 def h_r1(E, h_r0):
