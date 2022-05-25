@@ -602,7 +602,7 @@ def n_G3(K_WL, W):
 def alfa(case_of_application="Floor heating"):
     """
     Table A.20 - Additional thermal transfer resistance.
-    This function should not be used for calculating q.
+    XYZ This function should not be used for calculating q.
     """
     switcher = {
         "floor heating": 10.8,
@@ -650,52 +650,54 @@ def K_H3(R_w, R_r, R_x, R_i):
 
 def R_w1(W, d_a, s_r, m_H_sp, l):
     """Function B.6 - Resistance w for system E."""
-    return W**0.13/8*pi * ((d_a-2*s_r)/(m_H_sp*l))**0.87
+    return W**0.13 / 8 * pi * ((d_a - 2 * s_r) / (m_H_sp * l)) ** 0.87
+
 
 def R_r1(W, d_a, s_r, k_r):
     """Function B.7 - Resistance r of pipe wall for system E."""
-    return W * log(d_a/(d_a-2*s_r)) / (2*pi*k_r)
+    return W * log(d_a / (d_a - 2 * s_r)) / (2 * pi * k_r)
+
 
 def R_x1(W, d_a, k_b):
-    """Function B.8 - Resistance x between pipe outside wall 
+    """Function B.8 - Resistance x between pipe outside wall
     and conductive later for system E."""
-    return W * log(W/(pi*d_a)) / (2*pi*k_b)
+    return W * log(W / (pi * d_a)) / (2 * pi * k_b)
 
 
 def U_i(h_i, s_i, k_b):
     """Function B.9 - Heat transfer coefficient."""
-    return 1 / (1/h_i + s_i/k_b)
+    return 1 / (1 / h_i + s_i / k_b)
 
 
 def R_i(U_i):
     """Function B.10 - Resistance from function B.9, B.14 or B.15."""
-    return 1/U_i
+    return 1 / U_i
 
 
 def R_w2(W, k_w, m_H_sp, c):
     """Function B.11 - Resistance w for system F."""
-    return W/(pi*k_w) * (49.03 + 16.68 / pi * m_H_sp*c*W/k_w) ** (-1/3)
+    return W / (pi * k_w) * (49.03 + 16.68 / pi * m_H_sp * c * W / k_w) ** (-1 / 3)
 
 
 def R_r2(W, d_a, s_r, k_r):
     """Function B.12 - Resistance r of pipe wall for system F."""
-    return W * log(d_a/(d_a-2*s_r)) / (2*pi*k_r)
+    return W * log(d_a / (d_a - 2 * s_r)) / (2 * pi * k_r)
 
 
 def R_x2(W, d_a, k_l):
-    """Function B.13 - Resistance x between pipe outside wall 
+    """Function B.13 - Resistance x between pipe outside wall
     and conductive later for system F."""
-    return W / 3* (W/(pi*d_a)) / (2*pi*k_l)
+    return W / 3 * (W / (pi * d_a)) / (2 * pi * k_l)
 
 
 def U_1(h_1, s_1, k_b, s_l, k_l):
     """Function B.14 - Heat transfer coefficient 1 for system F."""
-    return 1 / (1/h_1 + s_1/k_b + s_l/(2*k_l))
+    return 1 / (1 / h_1 + s_1 / k_b + s_l / (2 * k_l))
 
 
 def U_2(h_2, s_l, k_l):
     """Function B.15 - Heat transfer coefficient 2 for system F."""
-    return 1 / (1/h_2 + s_l/(2*k_l))
+    return 1 / (1 / h_2 + s_l / (2 * k_l))
 
 
 # Function B.16 is equal to B.10
