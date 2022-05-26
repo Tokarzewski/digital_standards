@@ -138,13 +138,15 @@ def q(self):
 
 @dataclass
 class EmbeddedPipe:
-    d_a: float = 0.016  # External diameter of pipe [m]
-    s_R: float = 0.002  # Pipe wall thickness [m]
-    k_R: float = 0.35  # Thermal conductivity of the heat conducting material [W/mK]
+    name: str
+    d_a: float  # External diameter of pipe [m]
+    s_R: float  # Pipe wall thickness [m]
+    k_R: float  # Thermal conductivity of the heat conducting material [W/mK]
 
 
 @dataclass
 class EmbeddedRadiantSystem:
+    name: str
     system_type: str  # System type (A, B, C, D, H, I, J)
     embedded_pipe: EmbeddedPipe
     case_of_application: str = "floor heating"
