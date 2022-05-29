@@ -90,7 +90,7 @@ def R_s_c(environment="in", direction="horizontal"):
     """Surface resistance conventional"""
     if environment == "in":
         switcher = {"upwards": 0.1, "horizontal": 0.13, "downwards": 0.17}
-        return switcher.get(direction)
+        return switcher.get(direction.lower())
     else:
         # environment == "ext"
         return 0.04
@@ -114,7 +114,7 @@ def h_r0(T_mn):
 def h_ci(direction):
     """Function C.4 - Convective surface coefficient for internal surface."""
     switcher = {"upwards": 5.0, "horizontal": 2.5, "downwards": 0.7}
-    return switcher.get(direction)
+    return switcher.get(direction.lower())
 
 
 def h_ce(v):

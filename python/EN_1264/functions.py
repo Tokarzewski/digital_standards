@@ -118,11 +118,11 @@ def alfa(process="heating", direction="upwards"):
     """EN 1264:5 Table A.1 - Thermal transfer resistance."""
     if process == "heating":
         switcher = {"upwards": 10.8, "horizontal": 8, "downwards": 6.5}
-        return switcher.get(direction)
+        return switcher.get(direction.lower())
     else:
         # process == "cooling"
         switcher = {"upwards": 6.5, "horizontal": 8, "downwards": 10.8}
-        return switcher.get(direction)
+        return switcher.get(direction.lower())
 
 
 def deltat_C(t_C_out, t_C_in, t_i=26):
