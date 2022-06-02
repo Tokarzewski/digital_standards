@@ -173,6 +173,33 @@ def Phi_max(H_g, H_pe, t_int_ann_ave, t_e_ann_ave, t_e_amp):
     return H_g * (t_int_ann_ave - t_e_ann_ave) + H_pe * t_e_amp
 
 
-def H_g_ann_m(Phi_m,  t_int_ann_ave, t_e_ann_ave):
+def H_g_ann_m(Phi_m, t_int_ann_ave, t_e_ann_ave):
     """Function C.10 - Monthly ground heat transfer coefficient."""
     return Phi_m / (t_int_ann_ave - t_e_ann_ave)
+
+
+def H_g_H_adj(XYZ):
+    """Function C.11 - Seasonal heat transfer coefficient adjusted
+    to the average temperature difference over the heating season."""
+    return XYZ
+
+
+def H_g_C_adj(XYZ):
+    """Function C.12 - Seasonal heat transfer coefficient adjusted
+    to the average temperature difference over the cooling season."""
+    return XYZ
+
+
+def Q_1(Q_m):
+    """Function C.13 - Total heat transfer to ground during season."""
+    return sum(Q_m)
+
+
+def Q_m(N_m, Phi_m):
+    """Function C.14 - Total heat transfer to ground in month."""
+    return 86400 * N_m * Phi_m
+
+
+def Q_2(N, Phi):
+    """Function C.15 - Total heat trasnfer to ground during season."""
+    return 86400 * N * Phi
