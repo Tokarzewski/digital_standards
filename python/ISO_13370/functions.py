@@ -1,4 +1,4 @@
-from math import log, cos, sin, pi
+from math import log, cos, sin, sqrt, pi
 
 
 def H_g1(A, U, P, Psi_wf):
@@ -176,3 +176,139 @@ def Phi_max(H_g, H_pe, t_int_ann_ave, t_e_ann_ave, t_e_amp):
 def H_g_ann_m(Phi_m, t_int_ann_ave, t_e_ann_ave):
     """Function C.10 - Monthly ground heat transfer coefficient."""
     return Phi_m / (t_int_ann_ave - t_e_ann_ave)
+
+
+def d(R, k):
+    """Function D.1 - Equivalent thickness resulting from the edge insulation."""
+    return R * k
+
+
+def R(R_n, d_n, k):
+    """Function D.2 - Additional thermal resistance."""
+    return R_n - d_n / k
+
+
+def H_g(A, U, P, Psi_wf, Psi_g_ed):
+    """Function D.3 - Steady state ground heat transfer with edge insulation."""
+    return A * U + P * (Psi_wf + Psi_g_ed)
+
+
+def U_fg_sog(U_fg_sog_0, Psi_g_ed, B):
+    """Function D.4 - Thermal transmittance of the floor with edge insulation."""
+    return U_fg_sog_0 + 2 * Psi_g_ed / B
+
+
+def Psi_g_ed(k, D, d_f, d):
+    """Function D.5 - Linear thermal transmittance for horizontal edge insulation."""
+    return -k / pi * (log(D / d_f + 1) - log(D / (d_f + d) + 1))
+
+
+def Psi_w_f(k, D, d_f, d):
+    """Function D.6 - Linear thermal transmittance for vertical edge insulation"""
+    return -k / pi * (log(2 * D / d_f + 1) - log(2 * D / (d_f + d) + 1))
+
+
+def Phi_e(Phi_t, A_e, A_m, b, d_f_tot, B):
+    """Function E.1 - Heat flow rate for the edge region."""
+    return Phi_t * A_e / (A_m * ((b + d_f_tot) / (0.5 * B + d_f_tot)) + A_e)
+
+
+def Phi_m(Phi_t, Phi_e):
+    """Function E.2 - Heat flow rate for the central region."""
+    return Phi_t - Phi_e
+
+
+def q_e(Phi_e, A_e):
+    """Function E.3 - Density of heat flow rate for rooms at the edge of the building."""
+    return Phi_e / A_e
+
+
+def q_m(Phi_m, A_m):
+    """Function E.4 - Density of heat flow rate for rooms in the middle of the building."""
+    return Phi_m / A_m
+
+
+def R_vi(U, R_si, R_f, R_g):
+    """Function F.1 - Thermal resistance of the virtual layer."""
+    return 1 / U - R_si - R_f - R_g
+
+
+def t_vi_m(t_int_m, Phi_m, P, Psi_wf, t_int_ann_ave, t_e_ann_ave, A, U):
+    """Function F.2 - Virtual temperature (approximate)."""
+    return t_int_m - (Phi_m - P * Psi_wf * (t_int_ann_ave - t_e_ann_ave)) / (A * U)
+
+
+def t_vi_t(t_int_m, Phi_t, A, U):
+    """Function F.3 - Virtual temperature (numerical)."""
+    return t_int_m - Phi_t / (A * U)
+
+
+def t_us_ann_ave(
+    U_f_sus, A, U_g, h, P, U_w, V, c_p, rho, t_ve_ann_ave, t_int_ann_ave, t_e_ann_ave
+):
+    """Function G.1 - Annual average temperature in underfloor space."""
+    x = A * U_f_sus
+    y = V * c_p * rho
+    z = A * U_g + h * P * U_w
+    numerator = x * t_int_ann_ave + y * t_ve_ann_ave + z * t_e_ann_ave
+    denominator = x + y + z
+    return numerator / denominator
+
+
+def U_g(U_fg_b, z, P, U_wg_b, A):
+    """Function G.2 - Thermal transmitance of the ground."""
+    return U_fg_b + z * P * U_wg_b / A
+
+
+def U_fg_sus_be(
+    U_f_sus, A, U_g, h, P, U_w, V, c_p, rho, t_ve_ann_ave, t_int_ann_ave, t_e_ann_ave
+):
+    """Function G.3 - Thermal transmitance of the floor
+    between internal and external environments."""
+    x = A * U_g
+    y = h * P * U_w
+    z = V * c_p * rho
+    t = (t_int_ann_ave - t_ve_ann_ave) / (t_int_ann_ave - t_e_ann_ave)
+    numerator = x + y + z * t
+    denominator = A * U_f_sus + x + y + z
+    return U_f_sus * numerator / denominator
+
+
+def V(epsilon, v, f_w, P):
+    """Function G.4 - Ventilation rate."""
+    return 0.59 * epsilon * v * f_w * P
+
+
+def U_fg_sus_in(U_f_sus, U_g, h, U_w, B, V, c_p, rho, A):
+    """Function G.5 - Thermal transmitance of the floor for ventilated from inside."""
+    z = V * c_p * rho
+    return 1 / (1 / U_f_sus + (1 + z / (A * U_f_sus)) / (U_g + 2 * h * U_w / B))
+
+
+def U_fg_sus_out(U_f_sus, U_g, h, U_w, B, V, c_p, rho, A):
+    """Function G.6 - Thermal transmitance of the floor for ventilated from outside."""
+    z = V * c_p * rho
+    return 1 / (1 / U_f_sus + 1 / (U_g + 2 * h * U_w / B + z / A))
+
+
+def U_fg_sus_un(U_f_sus, U_g, h, U_w, B):
+    """Function G.7 - Thermal transmitance of the floor for unventilated."""
+    return 1 / (1 / U_f_sus + 1 / (U_g + 2 * h * U_w / B))
+
+
+def sigma1(k_g, rho, c):
+    """Function H.1 - Periodic penetration depth."""
+    return sqrt(3.15 * 10**7 * k_g / (pi * rho * c))
+
+
+def sigma2(material):
+    """Table H.1 - Periodic penetration depth."""
+    switcher = {
+        "clay": 2.2,
+        "silt": 2.2,
+        "sand": 3.2,
+        "gravel": 3.2,
+        "homogenerous rock": 4.2,
+    }
+    return switcher.get(material.lower())
+
