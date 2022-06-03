@@ -173,6 +173,6 @@ def Phi_max(H_g, H_pe, t_int_ann_ave, t_e_ann_ave, t_e_amp):
     return H_g * (t_int_ann_ave - t_e_ann_ave) + H_pe * t_e_amp
 
 
-def H_g_ann_m(Phi_m,  t_int_ann_ave, t_e_ann_ave):
+def H_g_ann_m(Phi_m, t_int_ann_ave, t_e_ann_ave):
     """Function C.10 - Monthly ground heat transfer coefficient."""
     return Phi_m / (t_int_ann_ave - t_e_ann_ave)

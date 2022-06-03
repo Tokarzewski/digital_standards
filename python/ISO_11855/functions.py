@@ -596,7 +596,7 @@ def n_G3(K_WL, W):
     return float(cs(W, K_WL))
 
 
-def alfa(case_of_application="Floor heating"):
+def alfa(case_of_application="floor heating"):
     """
     Table A.20 - Additional thermal transfer resistance.
     XYZ This function should not be used for calculating q.

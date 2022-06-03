@@ -159,9 +159,9 @@ class EmbeddedRadiantSystem:
     k_WL: float = 0.35  # Thermal conductivity of the heat conducting material [W/mK]
     L_WL: float = 1.0  # Width of heat conducting device [m]
 
-    s_u: float = 0.02  # Thickness of layer above the pipe [m]
+    s_u: float = 0.045  # Thickness of layer above the pipe [m]
     R_k_B: float = 0.05  # Thermal resistance of the floor covering [m2K/W]
-    k_E: float = 1.0  # Thermal conductivity of screed [W/mK]
+    k_E: float = 1.8  # Thermal conductivity of screed [W/mK]
     psi: float = 0.05  # Volume ratio of the attachement studs in the screed
     k_W: float = 0.5  # Thermal conductivity of the attachements studs [W/mK]
 

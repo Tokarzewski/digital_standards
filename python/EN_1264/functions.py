@@ -4,7 +4,7 @@ from math import log, sqrt
 def deltat_H(t_V, t_R, t_i):
     """Function 1 - Temperature difference
     between heating fluid and room."""
-    return t_V - t_R / log((t_V - t_i) / (t_R - t_i))
+    return (t_V - t_R) / log((t_V - t_i) / (t_R - t_i))
 
 
 def q_H(K_H, deltat_H):
