@@ -1,4 +1,4 @@
-from math import log, cos, sin, sqrt, pi
+from math import log, cos, sin, sqrt, pi, e
 
 
 def H_g1(A, U, P, Psi_wf):
@@ -312,3 +312,36 @@ def sigma2(material):
     }
     return switcher.get(material.lower())
 
+
+def H_pi1(A, k_g, d_f, sigma):
+    """Function H.2 - Internal periodic heat transfer coefficient
+    for slab-on-ground floor: uninsulated, with all-over insulation,
+    with edge insulation."""
+    return A * k_g / d_f * sqrt(2 / ((1 + sigma / d_f) ** 2 + 1))
+
+
+def H_pe1(P, k_g, d_f, sigma):
+    """Function H.3 - External periodic heat transfer coefficient
+    for slab-on-ground floor: uninsulated or with all-over insulation."""
+    return 0.37 * P * k_g * log(sigma / d_f + 1)
+
+
+def H_pe2(P, k_g, d_f, sigma, d, D):
+    """Function H.4 - External periodic heat transfer coefficient
+    for slab-on-ground floor with horizontal edge insulation."""
+    x = 0.37 * P * k_g
+    y = e ** (-D / sigma)
+    return x * ((1 - y) * log(sigma / (d_f + d) + 1) + y * log(sigma / d_f + 1))
+
+
+def H_pe3(P, k_g, d_f, sigma, d, D):
+    """Function H.5 - External periodic heat transfer coefficient
+    for slab-on-ground floor with vertical edge insulation."""
+    x = 0.37 * P * k_g
+    y = e ** (-2 * D / sigma)
+    return x * ((1 - y) * log(sigma / (d_f + d) + 1) + y * log(sigma / d_f + 1))
+
+
+def H_pi2(A, U_f_sus, k_g, sigma, U_x):
+    """Function H.6 - Internal periodic heat transfer coefficient
+    for suspended floor."""
