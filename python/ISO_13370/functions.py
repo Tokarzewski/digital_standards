@@ -178,12 +178,12 @@ def H_g_ann_m(Phi_m, t_int_ann_ave, t_e_ann_ave):
     return Phi_m / (t_int_ann_ave - t_e_ann_ave)
 
 
-def d(R, k):
+def d_prim(R_prim, k):
     """Function D.1 - Equivalent thickness resulting from the edge insulation."""
-    return R * k
+    return R_prim * k
 
 
-def R(R_n, d_n, k):
+def R_prim(R_n, d_n, k):
     """Function D.2 - Additional thermal resistance."""
     return R_n - d_n / k
 
@@ -193,19 +193,19 @@ def H_g(A, U, P, Psi_wf, Psi_g_ed):
     return A * U + P * (Psi_wf + Psi_g_ed)
 
 
-def U_fg_sog(U_fg_sog_0, Psi_g_ed, B):
+def U_fg_sog3(U_fg_sog_0, Psi_g_ed, B):
     """Function D.4 - Thermal transmittance of the floor with edge insulation."""
     return U_fg_sog_0 + 2 * Psi_g_ed / B
 
 
-def Psi_g_ed(k, D, d_f, d):
+def Psi_g_ed(k, D, d_f, d_prim):
     """Function D.5 - Linear thermal transmittance for horizontal edge insulation."""
-    return -k / pi * (log(D / d_f + 1) - log(D / (d_f + d) + 1))
+    return -k / pi * (log(D / d_f + 1) - log(D / (d_f + d_prim) + 1))
 
 
-def Psi_w_f(k, D, d_f, d):
+def Psi_w_f(k, D, d_f, d_prim):
     """Function D.6 - Linear thermal transmittance for vertical edge insulation"""
-    return -k / pi * (log(2 * D / d_f + 1) - log(2 * D / (d_f + d) + 1))
+    return -k / pi * (log(2 * D / d_f + 1) - log(2 * D / (d_f + d_prim) + 1))
 
 
 def Phi_e(Phi_t, A_e, A_m, b, d_f_tot, B):
@@ -345,3 +345,47 @@ def H_pe3(P, k_g, d_f, sigma, d, D):
 def H_pi2(A, U_f_sus, k_g, sigma, U_x):
     """Function H.6 - Internal periodic heat transfer coefficient
     for suspended floor."""
+    return A * (1 / U_f_sus + 1 / (k_g / sigma + U_x))
+
+
+def H_pe4(U_f, P, k_g, sigma, d_g, U_x, A):
+    """Function H.7 - External periodic heat transfer coefficient
+    for suspended floor."""
+    return (
+        U_f
+        * (0.37 * P * k_g * log(sigma / d_g + 1) + U_x * A)
+        / (k_g / (sigma + U_x + U_f))
+    )
+
+
+def H_pi3(A, k_g, d_f, sigma, z, P, d_w):
+    """Function H.8 - Internal periodic heat transfer coefficient
+    for the heated basement."""
+    floor_term = A * k_g / d_f * sqrt(2 / ((1 + sigma / d_f) ** 2 + 1))
+    wall_term = z * P * k_g / d_w * sqrt(2 / ((1 + sigma / d_w) ** 2 + 1))
+    return floor_term + wall_term
+
+
+def H_pe5(k_g, d_f, sigma, z, P, d_w):
+    """Function H.9 - External periodic heat transfer coefficient
+    for the heated basement."""
+    floor_term = e ** (-z / sigma) * log(sigma / d_f + 1)
+    wall_term = 2 * (1 - e ** (-z / sigma)) * log(sigma / d_w + 1)
+    return 0.37 * P * k_g * (floor_term + wall_term)
+
+
+def H_pi4(A, U_f_s, z, P, k_g, sigma, h, U_w, n, V):
+    """Function H.10 - Internal periodic heat transfer coefficient
+    for the unheated basement."""
+    return 1 / (
+        1 / (A * U_f_s) + 1 / ((A + z * P) * k_g / sigma + h * P * U_w + 0.33 * n * V)
+    )
+
+
+def H_pe6(A, U_f_s, z, P, k_g, sigma, h, U_w, n, V, U_f_sus):
+    """Function H.11 - External periodic heat transfer coefficient
+    for the unheated basement."""
+    x = h * P * U_w + 0.33 * n * V
+    nominator = 0.37 * P * k_g * (2 - e ** (-z / sigma)) * log(sigma / d_f + 1) + x
+    denominator = (A + z * P) * k_g / sigma + x + A * U_f_sus
+    return A * U_f_s * nominator / denominator
