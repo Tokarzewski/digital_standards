@@ -5,15 +5,16 @@ from dataclasses import dataclass, field
 @dataclass
 class Material:
     name: str
-    thickness: float
-    conductivity: float
-    resistance: float = field(init=False)
+    d: float
+    k: float
+    R: float = field(init=False)
 
     def __post_init__(self) -> None:
-        self.resistance = f.R(self.thickness, self.conductivity)
+        self.R = f.R(self.d, self.k)
 
 
 @dataclass
 class Construction:
     name: str
     materials: list
+    
