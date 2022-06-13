@@ -1,5 +1,10 @@
 import iso_13370.functions as f
-from iso_13370.methodology import Ground, SlabOnGroundFloor, SuspendedFloor, BasementFloor
+from iso_13370.methodology import (
+    Ground,
+    SlabOnGroundFloor,
+    SuspendedFloor,
+    BasementFloor,
+)
 from iso_6946.methodology import Construction, Material
 
 GroundA = Ground("Soil", k_g=2.0)

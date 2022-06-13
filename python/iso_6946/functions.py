@@ -1,4 +1,5 @@
 from math import log
+from numpy import iterable
 
 
 def U1(R_tot):
@@ -16,13 +17,13 @@ def R(d, k):
     return d / k
 
 
-def iterable(x):
-    """Function from the numpy module."""
-    try:
-        iter(x)
-    except TypeError:
-        return False
-    return True
+def R_cond(R_n):
+    """Function X -
+    Total thermal resistance of a building component
+    of homogeneous layers."""
+    if iterable(R_n):
+        R_n = sum(R_n)
+    return R_n  
 
 
 def R_tot1(R_si, R_n, R_se):

@@ -16,5 +16,10 @@ class Material:
 @dataclass
 class Construction:
     name: str
-    materials: list
-    
+    materials: list[Material]
+    R_cond: float = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.R = f.R_cond(self.materials.R)
+
+
