@@ -7,7 +7,5 @@ for direction in ["upwards", "horizontal", "downwards"]:
     print(direction, h_ci(direction))
 
 
-MaterialA = Material(name="Concrete", d=0.3, k=1.0)
-MaterialB = Material(name="Concrete", d=0.3, k=1.0)
-ConstructionA = Construction(name="Slab", materials=MaterialA)
+
 

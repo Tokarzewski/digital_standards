@@ -12,14 +12,11 @@ class Material:
     def __post_init__(self) -> None:
         self.R = f.R(self.d, self.k)
 
-
 @dataclass
 class Construction:
     name: str
     materials: list[Material]
-    R_cond: float = field(init=False)
+    R_c_op: float = field(init=False)
 
     def __post_init__(self) -> None:
-        self.R = f.R_cond(self.materials.R)
-
-
+        self.R_c_op = sum([material.R for material in self.materials])

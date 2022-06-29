@@ -3,7 +3,8 @@ from iso_13370.methodology import (
     Ground,
     SlabOnGroundFloor,
     SuspendedFloor,
-    BasementFloor,
+    HeatedBasement,
+    UnheatedBasement,
 )
 from iso_6946.methodology import Construction, Material
 
@@ -13,8 +14,10 @@ ConstructionA = Construction(name="Slab", materials=MaterialA)
 
 ClassA = SlabOnGroundFloor("FloorA", 100, 40, GroundA, ConstructionA)
 ClassB = SuspendedFloor("FloorA", 100, 40, GroundA)
-ClassC = BasementFloor("FloorA", 100, 40, GroundA)
+ClassC = HeatedBasement("FloorA", 100, 40, GroundA)
+ClassD = UnheatedBasement("FloorA", 100, 40, GroundA)
 
 print(ClassA)
 print(ClassB)
 print(ClassC)
+print(ClassD)

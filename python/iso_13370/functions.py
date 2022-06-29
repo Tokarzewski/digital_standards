@@ -2,12 +2,24 @@ from math import log, cos, sin, sqrt, pi, e
 
 
 def H_g1(A, U, P, Psi_wf):
-    """Function 1 - Steady state ground heat transfer."""
+    """
+    Function 1 - Steady state ground heat transfer.
+    Arguments:
+    A - area,
+    U -  heat conduction,
+    P - perimeter,
+    Psi_wf - 
+    """
     return A * U + P * Psi_wf
 
 
 def B(A, P):
-    """Function 2 - Characteristic dimension of floor."""
+    """
+    Function 2 - Characteristic dimension of floor.
+    Arguments:
+    A - area,
+    P - perimeter.
+    """
     return 2 * A / P
 
 
@@ -24,6 +36,14 @@ def U_fg_sog1(k_g, B, d_f):
 def U_fg_sog2(k_g, B, d_f):
     """Function 5 - Hard core thermal transmittance."""
     return k_g / (0.457 * B + d_f)
+
+
+def U_fg_sog(k_g, B, d_f):
+    """Functions 4 and 5 - Hard core thermal transmittance."""
+    if d_f < B:
+        return U_fg_sog1(k_g=k_g, B=B, d_f=d_f)
+    else:
+        return U_fg_sog2(k_g=k_g, B=B, d_f=d_f)
 
 
 # Functions 6-7 are alternative functions to function 5.

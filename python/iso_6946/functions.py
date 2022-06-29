@@ -17,15 +17,6 @@ def R(d, k):
     return d / k
 
 
-def R_cond(R_n):
-    """Function X -
-    Total thermal resistance of a building component
-    of homogeneous layers."""
-    if iterable(R_n):
-        R_n = sum(R_n)
-    return R_n  
-
-
 def R_tot1(R_si, R_n, R_se):
     """Function 4 -
     Total thermal resistance of a building component
@@ -92,8 +83,7 @@ def R_s_c(environment="in", direction="horizontal"):
     if environment == "in":
         switcher = {"upwards": 0.1, "horizontal": 0.13, "downwards": 0.17}
         return switcher.get(direction.lower())
-    else:
-        # environment == "ext"
+    elif environment == "ext":
         return 0.04
 
 

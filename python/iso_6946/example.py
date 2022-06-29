@@ -7,11 +7,11 @@ material3 = Material("Concrete", 0.3, 1.0)
 
 materials = [material1, material2, material3]
 
-construction1 = Construction("Floor", materials)
-
-print(construction1)
-
+ConstructionA = Construction("Floor", materials)
 
 MaterialA = Material(name="Concrete", d=0.3, k=1.0)
 MaterialB = Material(name="Concrete", d=0.3, k=1.0)
-ConstructionA = Construction(name="Slab", materials=[MaterialA, MaterialB])
+ConstructionB = Construction(name="Slab", materials=[MaterialA, MaterialB])
+
+print(ConstructionA.R_c_op)
+print(ConstructionB.R_c_op)
