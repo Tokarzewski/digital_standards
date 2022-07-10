@@ -1,3 +1,3 @@
-# integration tests
+# tests
 
-Directory for unit and integration tests
+Directory for unit and integration tests.

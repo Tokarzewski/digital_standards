@@ -19,8 +19,7 @@ def R(d, k):
 
 def R_tot1(R_si, R_n, R_se):
     """Function 4 -
-    Total thermal resistance of a building component
-    of homogeneous layers."""
+    Total thermal resistance of a building component of homogeneous layers."""
     if iterable(R_n):
         R_n = sum(R_n)
     return R_si + R_n + R_se
@@ -28,28 +27,29 @@ def R_tot1(R_si, R_n, R_se):
 
 def R_tot2(R_tot_upper, R_tot_lower):
     """Function 5 -
-    Total thermal resistance of a building component
-    of inhomogeneous layers."""
+    Total thermal resistance of a building component of inhomogeneous layers."""
     return (R_tot_upper + R_tot_lower) / 2
 
 
 def R_tot_upper(f_q, R_tot_q):
-    """Function 6 - Upper limit of the total thermal resistance."""
+    """Function 6 - Upper limit of the total thermal resistance
+    for inhomogenous component."""
     return 1 / sum([f / R for f, R in zip(f_q, R_tot_q)])
 
 
 def R_j1(f_q, R_qj):
-    """Function 7 - Equivalent thermal resistance."""
+    """Function 7 - Equivalent thermal resistance for inhomogenous component."""
     return 1 / sum([f / R for f, R in zip(f_q, R_qj)])
 
 
 def R_j2(d_j, k_eq_j):
-    """Function 8 - Alternative method of an equivalent thermal resistance."""
+    """Function 8 - Alternative method of an equivalent thermal resistance
+    for inhomogenous component."""
     return d_j / k_eq_j
 
 
 def k_eq_j(k_qj, f_q):
-    """Function 9 - Equivalent thermal conductivity."""
+    """Function 9 - Equivalent thermal conductivity for inhomogenous component."""
     return sum([k * f for k, f in zip(k_qj, f_q)])
 
 

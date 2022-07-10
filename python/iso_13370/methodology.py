@@ -31,10 +31,8 @@ class SlabOnGroundFloor:
             R_f_sog=self.R_f_sog,
             R_se=0,
         )
-        self.U_fg_sog = f.U_fg_sog(
-            k_g=self.ground.k_g, 
-            B=self.B, 
-            d_f=self.d_f)
+        self.U_fg_sog = f.U_fg_sog(k_g=self.ground.k_g, B=self.B, d_f=self.d_f)
+
 
 @dataclass
 class SuspendedFloor:

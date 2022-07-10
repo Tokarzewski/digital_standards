@@ -8,7 +8,7 @@ def H_g1(A, U, P, Psi_wf):
     A - area,
     U -  heat conduction,
     P - perimeter,
-    Psi_wf - 
+    Psi_wf -
     """
     return A * U + P * Psi_wf
 
