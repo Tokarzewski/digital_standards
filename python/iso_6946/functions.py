@@ -1,5 +1,6 @@
 from math import log
 from numpy import iterable
+from scipy.interpolate import CubicSpline
 
 
 def U1(R_tot):
@@ -59,9 +60,39 @@ def e(R_tot_upper, R_tot_lower):
     return (R_tot_upper + R_tot_lower) * 50 / R_tot
 
 
+def R_s_c(boundary="in", direction="horizontal"):
+    """Table 7 - Surface resistance conventional."""
+    if boundary == "in":
+        switcher = {"upwards": 0.1, "horizontal": 0.13, "downwards": 0.17}
+        return switcher.get(direction.lower())
+    elif boundary == "ext":
+        return 0.04
+
+
+def R_unve_air(thickness, direction):
+    """Table 8 - Thermal resistance of unventilated air layers with high
+    emissivity surfaces."""
+    if direction.lower() == "upwards":
+        x_thickness = [0, 5, 7, 10, 15, 25, 50, 100, 300]
+        y_R = [0.00, 0.11, 0.13, 0.15, 0.16, 0.16, 0.16, 0.16, 0.16]
+        cs = CubicSpline(x_thickness, y_R)
+        return cs(thickness)
+
+    if direction.lower() == "horizontal":
+        x_thickness = [0, 5, 7, 10, 15, 25, 50, 100, 300]
+        y_R = [0.00, 0.11, 0.13, 0.15, 0.17, 0.18, 0.18, 0.18, 0.18]
+        cs = CubicSpline(x_thickness, y_R)
+        return cs(thickness)
+
+    if direction.lower() == "downwards":
+        x_thickness = [0, 5, 7, 10, 15, 25, 50, 100, 300]
+        y_R = [0.00, 0.11, 0.13, 0.15, 0.17, 0.19, 0.21, 0.22, 0.23]
+        cs = CubicSpline(x_thickness, y_R)
+        return cs(thickness)
+
+
 def R_tot3(A_ve, R_tot_nve, R_tot_ve):
-    """Function 11 -
-    Total thermal resistance of a component with
+    """Function 11 - Total thermal resistance of a component with
     a slightly ventilated air layer."""
     return (1500 - A_ve) * R_tot_nve / 1000 + (A_ve - 500) * R_tot_ve / 1000
 
@@ -78,15 +109,6 @@ def R_u(A_i, A_e_k, U_e_k, n, V):
 # Annex C - Surface Resistance
 
 
-def R_s_c(environment="in", direction="horizontal"):
-    """Surface resistance conventional"""
-    if environment == "in":
-        switcher = {"upwards": 0.1, "horizontal": 0.13, "downwards": 0.17}
-        return switcher.get(direction.lower())
-    elif environment == "ext":
-        return 0.04
-
-
 def R_s(h_c, h_r):
     """Function C.1 - Surface resistance."""
     return 1 / (h_c + h_r)
@@ -98,7 +120,10 @@ def h_r(epsilon, h_r0):
 
 
 def h_r0(T_mn):
-    """Function C.3 - Radiative coefficient for a black-body surface."""
+    """Function C.3 - Radiative coefficient for a black-body surface.
+    Arguments:
+    T_mn - mean temperature of the surface and of its surroundings [K]
+    """
     return 4 * 5.67 * 10e-8 * T_mn**3
 
 
@@ -123,9 +148,8 @@ def R_sp(R_s, A_p, A):
 
 
 def R_a1(h_a, h_r):
-    """Function D.1 -
-    Thermal resistance of the unventiled airspaces with length and width
-    both more than 10 times thickness."""
+    """Function D.1 - Thermal resistance of the unventiled airspaces
+    with length and width both more than 10 times thickness."""
     return 1 / (h_a + h_r)
 
 
