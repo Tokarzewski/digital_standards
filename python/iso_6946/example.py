@@ -15,17 +15,14 @@ ConstructionB = Construction(name="Wall", materials=[MaterialA, MaterialB])
 # print(ConstructionA.R_c_op)
 # print(ConstructionB.R_c_op)
 
-
 boundary = "ext"
 direction = "horizontal"
 
 R_s = SurfaceResistance(boundary=boundary, direction=direction, material=material1)
-
 R_s_c = R_s_c(boundary=boundary, direction=direction)
 
 # print("R_s", R_s.R_s)
 # print("R_s_c", R_s_c)
-
 
 U_value_test = Transmittance(
     name="Wall U-Value", construction=ConstructionB, direction="horizontal"

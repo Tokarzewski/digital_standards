@@ -1,5 +1,6 @@
 import iso_6946.functions as f
 from dataclasses import dataclass, field
+from numpy import iterable
 
 
 @dataclass
@@ -21,7 +22,10 @@ class Construction:
     R_c_op: float = field(init=False)
 
     def __post_init__(self) -> None:
-        self.R_c_op = sum([material.R for material in self.materials])
+        if iterable(self.materials):
+            self.R_c_op = sum([material.R for material in self.materials])
+        else:
+            self.R_c_op = self.materials.R
 
 
 @dataclass

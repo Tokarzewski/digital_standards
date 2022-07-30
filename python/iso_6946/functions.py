@@ -60,7 +60,7 @@ def e(R_tot_upper, R_tot_lower):
     return (R_tot_upper + R_tot_lower) * 50 / R_tot
 
 
-def R_s_c(boundary="in", direction="horizontal"):
+def R_s_c(boundary, direction):
     """Table 7 - Surface resistance conventional."""
     if boundary == "in":
         switcher = {"upwards": 0.1, "horizontal": 0.13, "downwards": 0.17}

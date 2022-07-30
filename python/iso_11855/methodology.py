@@ -19,49 +19,46 @@ def q_ACHIJ(self):
     else:
         k_E = self.k_E
 
+    a_B = f.a_B1(self.alfa, k_E, self.R_k_B)
+    a_W = f.a_W1(self.R_k_B)
+    m_U = f.m_U(self.s_u)
+    m_D = f.m_D(self.D)
+
     if self.W <= 0.375:
-        a_B = f.a_B1(self.alfa, k_E, self.R_k_B)
-        a_W = f.a_W1(self.R_k_B)
         a_U = f.a_U1(self.R_k_B, self.W)
         a_D = f.a_D(self.R_k_B, self.W)
         m_W = f.m_W(self.W)
-        m_U = f.m_U(self.s_u)
-        m_D = f.m_D(self.D)
 
         a_i = [a_B, a_W, a_U, a_D]
         m_i = [1, m_W, m_U, m_D]
+
         self.B = f.B1(
-            self.B_0,
-            a_i,
-            m_i,
-            self.W,
-            self.embedded_pipe.k_R,
-            self.embedded_pipe.d_a,
-            self.embedded_pipe.s_R,
+            B_0=self.B_0,
+            a_i=a_i,
+            m_i=m_i,
+            W=self.W,
+            k_R=self.embedded_pipe.conductivity,
+            d_a=self.embedded_pipe.external_diameter,
+            s_R=self.embedded_pipe.wall_thickness,
         )
         return f.q5(self.B, a_i, m_i, self.deltat_H)
 
     else:
-
-        a_B = f.a_B1(self.alfa, k_E, self.R_k_B)
-        a_W = f.a_W1(self.R_k_B)
         a_U = f.a_U1(self.R_k_B, W=0.375)
         a_D = f.a_D(self.R_k_B, W=0.375)
         m_W = f.m_W(W=0.375)
-        m_U = f.m_U(self.embedded_pipe.s_u)
-        m_D = f.m_D(self.D)
 
         a_i = [a_B, a_W, a_U, a_D]
         m_i = [1, m_W, m_U, m_D]
 
         self.B = f.B1(
-            self.B_0,
-            a_i,
-            m_i,
-            self.W,
-            self.embedded_pipe.k_R,
-            self.embedded_pipe.d_a,
-            self.embedded_pipe.s_R,
+            B_0=self.B_0,
+            a_i=a_i,
+            m_i=m_i,
+            W=self.W,
+            k_R=self.embedded_pipe.conductivity,
+            d_a=self.embedded_pipe.external_diameter,
+            s_R=self.embedded_pipe.wall_thickness,
         )
         q_0375 = f.q5(self.B, a_i, m_i, self.deltat_H)
 
@@ -92,13 +89,13 @@ def q_B(self):
     m_i = [1, m_W, 1, 1, 1]
 
     self.B = f.B1(
-        self.B_0,
-        a_i,
-        m_i,
-        self.W,
-        self.embedded_pipe.k_R,
-        self.embedded_pipe.d_a,
-        self.embedded_pipe.s_R,
+        B_0=self.B_0,
+        a_i=a_i,
+        m_i=m_i,
+        W=self.W,
+        k_R=self.embedded_pipe.conductivity,
+        d_a=self.embedded_pipe.external_diameter,
+        s_R=self.embedded_pipe.wall_thickness,
     )
 
     return f.q5(self.B, a_i, m_i, self.deltat_H)
@@ -113,13 +110,13 @@ def q_D(self):
     m_i = [1, 1, 1]
 
     self.B = f.B1(
-        self.B_0,
-        a_i,
-        m_i,
-        self.W,
-        self.embedded_pipe.k_R,
-        self.embedded_pipe.d_a,
-        self.embedded_pipe.s_R,
+        B_0=self.B_0,
+        a_i=a_i,
+        m_i=m_i,
+        W=self.W,
+        k_R=self.embedded_pipe.conductivity,
+        d_a=self.embedded_pipe.external_diameter,
+        s_R=self.embedded_pipe.wall_thickness,
     )
 
     return f.q5(self.B, a_i, m_i, self.deltat_H)
@@ -139,9 +136,9 @@ def q(self):
 @dataclass
 class EmbeddedPipe:
     name: str
-    d_a: float  # External diameter of pipe [m]
-    s_R: float  # Pipe wall thickness [m]
-    k_R: float  # Thermal conductivity of the heat conducting material [W/mK]
+    external_diameter: float  # External diameter of pipe [m]
+    wall_thickness: float  # Pipe wall thickness [m]
+    conductivity: float  # Thermal conductivity of the heat conducting material [W/mK]
 
 
 @dataclass
@@ -150,7 +147,7 @@ class EmbeddedRadiantSystem:
     system_type: str  # System type (A, B, C, D, H, I, J)
     embedded_pipe: EmbeddedPipe
     case_of_application: str = "floor heating"
-    W: float = 0.10  # Pipe spacing [m]
+    W: float = 0.1  # Pipe spacing [m]
 
     d_M: float = 0.017  # External diameter of sheating [m]
     k_M: float = 1.0  # Sheating material conductivity [W/mK]
@@ -178,6 +175,6 @@ class EmbeddedRadiantSystem:
         self.alfa = f.alfa(self.case_of_application)
         self.deltat_H = f.deltat_H(self.t_V, self.t_R, self.t_i)
         self.B_0 = B_0(self)
-        self.D = max(self.embedded_pipe.d_a, self.d_M)
+        self.D = max(self.embedded_pipe.external_diameter, self.d_M)
         self.q = q(self)
         self.K_H = self.q / self.deltat_H

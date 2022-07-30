@@ -498,7 +498,7 @@ def a_WL2(K_WL, W, D):
     points = (x_K_WL, y_W, z_D)
     point = np.array([K_WL, W, D])
     # xyz change linear interpolation to quadratic spline
-    return float(interpn(points, a_WL, point, method="linear"))
+    return float(interpn(points, a_WL, point, method="linear", bounds_error=False))
 
 
 def a_WL_inf(W):
