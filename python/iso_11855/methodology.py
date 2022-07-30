@@ -8,7 +8,7 @@ def B_0(self):
     elif self.system_type in "BD":
         return 6.5
     else:
-        return "There is no B for system type: ", self.system_type
+        return "There is no B_0 for system type: ", self.system_type
 
 
 def q_ACHIJ(self):
@@ -147,7 +147,7 @@ class EmbeddedRadiantSystem:
     system_type: str  # System type (A, B, C, D, H, I, J)
     embedded_pipe: EmbeddedPipe
     case_of_application: str = "floor heating"
-    W: float = 0.1  # Pipe spacing [m]
+    W: float = 0.10  # Pipe spacing [m]
 
     d_M: float = 0.017  # External diameter of sheating [m]
     k_M: float = 1.0  # Sheating material conductivity [W/mK]
