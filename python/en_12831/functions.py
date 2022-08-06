@@ -65,7 +65,7 @@ def H_T_ie(A_k, U_k, dU_TB, f_U_k, f_ie_k):
 
 
 def H_T_ia(A_k, U_k, f_ia_k):
-    """Function 7 - Heat transfer coefficient to adjacent room, 
+    """Function 7 - Heat transfer coefficient to adjacent room,
     adjacent unheated room or adjacent building entity."""
     return A_k * U_k * f_ia_k
 

@@ -45,6 +45,8 @@ class BuildingElement:
             construction=self.construction,
             direction=self.surface.direction,
         )
+
+
 """        if self.outside_boundary_condition in [
             "exterior",
             "adjacent room",
@@ -69,7 +71,7 @@ def H_T_ix(DesignDay, t_int_i, BuildingElement):
     dU_TB = BuildingElement.additional_thermal_transmittance
 
     t_e = DesignDay.external_design_temperature
-    #t_int_i = Room.t_int_i
+    # t_int_i = Room.t_int_i
     t_star_int_k = t_int_i  # XYZ limitation - only for rooms with h < 4m
 
     if type == "exterior":
@@ -99,7 +101,9 @@ def H_T_ix(DesignDay, t_int_i, BuildingElement):
         f_2 = f.f_2(t_int_i, t_e, t_star_int_k)
         f_ig_k = f.f_ix_k(f_1, f_2)
         f_GW_k = f.f_GW(1.5)
-        return type, f.H_T_ig(A_k, U_equiv_k, f_ig_k=f_ig_k, f_GW_k=f_GW_k, f_tann=f.f_tann)
+        return type, f.H_T_ig(
+            A_k, U_equiv_k, f_ig_k=f_ig_k, f_GW_k=f_GW_k, f_tann=f.f_tann
+        )
 
 
 @dataclass
@@ -126,7 +130,7 @@ class Room:
     Phi_HL_i: float = field(init=False)
 
     def __post_init__(self) -> None:
-        #self.H_T_ie = f.H_T_ie(self.A_k, self.U_k, self.dU_TB, self.f_U_k, self.f_ie_k)
+        # self.H_T_ie = f.H_T_ie(self.A_k, self.U_k, self.dU_TB, self.f_U_k, self.f_ie_k)
         """
         self.Phi_T_i = f.Phi_T_i1(
             self.H_T_ie,
