@@ -30,15 +30,12 @@ class FloorSlab:
 @dataclass
 class BuildingElement:
     name: str
-    #type: str
     construction: Construction
-    room_name: str
     outside_boundary_condition: str
     outside_boundary_condition_object: Any
     surface: Surface
     transmittance: Transmittance = field(init=False)
     additional_thermal_transmittance: float = 0.0
-    # openings: Window, Door, Hole, ATD
 
     H_T_ix: float = field(init=False)
 
@@ -48,17 +45,17 @@ class BuildingElement:
             construction=self.construction,
             direction=self.surface.direction,
         )
-        if self.outside_boundary_condition in [
+"""        if self.outside_boundary_condition in [
             "exterior",
             "adjacent room",
             "adjacent unheated room",
             "adjacent building entity",
             "ground",
         ]:
-            self.H_T_ix = H_T_ix(self)
+            self.H_T_ix = H_T_ix(self)"""
 
 
-def H_T_ix(DesignDay, Room, BuildingElement):
+def H_T_ix(DesignDay, t_int_i, BuildingElement):
     """Transmission heat transfer coefficient from the room (i) either to:
     exterior in accordance with 6.3.2.2,
     adjacent room in accordance with 6.3.2.3 (1)
@@ -66,13 +63,13 @@ def H_T_ix(DesignDay, Room, BuildingElement):
     adjacent building entity in accordance with 6.3.2.3 (2)
     ground in accordance with 6.3.2.4"""
 
-    type = BuildingElement.type
+    type = BuildingElement.outside_boundary_condition
     A_k = BuildingElement.surface.area
     U_k = BuildingElement.transmittance.U
     dU_TB = BuildingElement.additional_thermal_transmittance
 
     t_e = DesignDay.external_design_temperature
-    t_int_i = Room.t_int_i
+    #t_int_i = Room.t_int_i
     t_star_int_k = t_int_i  # XYZ limitation - only for rooms with h < 4m
 
     if type == "exterior":
@@ -80,7 +77,7 @@ def H_T_ix(DesignDay, Room, BuildingElement):
         f_2 = f.f_2(t_int_i=t_int_i, t_e=t_e, t_star_int_k=t_star_int_k)
         f_ie_k = f.f_ix_k(f_1, f_2)
         f_U_k = 1
-        return f.H_T_ie(A_k=A_k, U_k=U_k, dU_TB=dU_TB, f_U_k=f_U_k, f_ie_k=f_ie_k)
+        return type, f.H_T_ie(A_k=A_k, U_k=U_k, dU_TB=dU_TB, f_U_k=f_U_k, f_ie_k=f_ie_k)
 
     if type in ["adjacent room", "adjacent unheated room", "adjacent building entity"]:
         t_x = BuildingElement.outside_boundary_condition_object.t_int_i
@@ -88,7 +85,7 @@ def H_T_ix(DesignDay, Room, BuildingElement):
         f_2 = f.f_2(t_int_i, t_e=t_e, t_star_int_k=t_star_int_k)
         f_ia_k = f.f_ix_k(f_1, f_2)
 
-        return f.H_T_ia(A_k=A_k, U_k=U_k, f_ia_k=f_ia_k)
+        return type, f.H_T_ia(A_k=A_k, U_k=U_k, f_ia_k=f_ia_k)
 
     if type == "ground":
         direction = BuildingElement.surface.direction
@@ -101,8 +98,8 @@ def H_T_ix(DesignDay, Room, BuildingElement):
         t_x = DesignDay.annual_mean_external_temperature
         f_2 = f.f_2(t_int_i, t_e, t_star_int_k)
         f_ig_k = f.f_ix_k(f_1, f_2)
-        f_GW_k = f.f_GW(Room.height)
-        return f.H_T_ig(A_k, U_equiv_k, f_ig_k=f_ig_k, f_GW_k=f_GW_k, f_tann=f.f_tann)
+        f_GW_k = f.f_GW(1.5)
+        return type, f.H_T_ig(A_k, U_equiv_k, f_ig_k=f_ig_k, f_GW_k=f_GW_k, f_tann=f.f_tann)
 
 
 @dataclass
@@ -113,14 +110,14 @@ class Room:
     volume: float
     building_elements: List[BuildingElement] or BuildingElement
 
+    t_int_i: float = field(init=False)
+    t_e: float = field(init=False)
+
     H_T_ie: float = field(init=False)
     H_T_ia: float = field(init=False)
     H_T_iae: float = field(init=False)
     H_T_iaBE: float = field(init=False)
     H_T_ig: float = field(init=False)
-
-    t_int_i: float = field(init=False)
-    t_e: float = field(init=False)
 
     Phi_T_i: float = field(init=False)
     Phi_V_i: float = field(init=False)
@@ -129,7 +126,8 @@ class Room:
     Phi_HL_i: float = field(init=False)
 
     def __post_init__(self) -> None:
-        self.H_T_ie = f.H_T_ie(self.A_k, self.U_k, self.dU_TB, self.f_U_k, self.f_ie_k)
+        #self.H_T_ie = f.H_T_ie(self.A_k, self.U_k, self.dU_TB, self.f_U_k, self.f_ie_k)
+        """
         self.Phi_T_i = f.Phi_T_i1(
             self.H_T_ie,
             self.H_T_ia,
@@ -138,17 +136,17 @@ class Room:
             self.H_T_ig,
             self.t_int_i,
             self.t_e,
-        )
+        )"""
 
 
 @dataclass
 class Zone:
     name: str
 
-    transmission_heat_loss = field(init=False)
-    ventilation_heat_loss = field(init=False)
-    heating_up_powers = field(init=False)
-    heat_gains = field(init=False)
+    transmission_heat_loss: float = field(init=False)
+    ventilation_heat_loss: float = field(init=False)
+    heating_up_powers: float = field(init=False)
+    heat_gains: float = field(init=False)
     design_heat_load: float = field(init=False)
 
 
@@ -156,8 +154,8 @@ class Zone:
 class Building:
     name: str
 
-    transmission_heat_loss = field(init=False)
-    ventilation_heat_loss = field(init=False)
-    heating_up_powers = field(init=False)
-    heat_gains = field(init=False)
+    transmission_heat_loss: float = field(init=False)
+    ventilation_heat_loss: float = field(init=False)
+    heating_up_powers: float = field(init=False)
+    heat_gains: float = field(init=False)
     design_heat_load: float = field(init=False)

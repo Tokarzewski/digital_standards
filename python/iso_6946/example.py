@@ -24,8 +24,8 @@ R_s_c = R_s_c(boundary=boundary, direction=direction)
 # print("R_s", R_s.R_s)
 # print("R_s_c", R_s_c)
 
-U_value_test = Transmittance(
+U_test = Transmittance(
     name="Wall U-Value", construction=ConstructionB, direction="horizontal"
 )
 
-pprint(U_value_test)
+pprint(U_test)

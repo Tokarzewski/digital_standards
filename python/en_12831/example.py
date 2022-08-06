@@ -13,9 +13,15 @@ material3 = Material("Concrete", 0.3, 1.0)
 materials = [material1, material2, material3]
 construction1 = Construction("Floor", materials)
 
-BE1 = BuildingElement('BE1', construction1, 'room1', 'exterior', None, sz1)
+BE1 = BuildingElement('BE1', construction1, 'exterior', None, sz1)
 room1 = Room('room1', 100, 4, 400, BE1)
 
-H_T_ia = H_T_ix(DesignDay = winter_design_day, 
-                Room = room1, 
+H_T_ie = H_T_ix(DesignDay = winter_design_day, 
+                t_int_i = 20, 
                 BuildingElement = BE1)
+
+print(H_T_ie)
+
+Phi_T_i = round(H_T_ie[1] * (20 - (-20)),0)
+
+print(f'Phi_T_i {Phi_T_i} W')
