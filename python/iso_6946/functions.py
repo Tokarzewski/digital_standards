@@ -126,6 +126,7 @@ def h_r0(T_mn):
     """
     return 4 * 5.67 * 10e-8 * T_mn**3
 
+print(h_r0(20))
 
 def h_ci(direction):
     """Function C.4 - Convective surface coefficient for internal surface."""
