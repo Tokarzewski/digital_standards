@@ -9,7 +9,7 @@ UFH_A = EmbeddedRadiantSystem(
     system_type="A",
     embedded_pipe=embedded_pipe,
     case_of_application="floor heating",
-    W = 0.10 
+    W=0.10,
 )
 
 UFH_B = EmbeddedRadiantSystem(
@@ -17,7 +17,7 @@ UFH_B = EmbeddedRadiantSystem(
     system_type="B",
     embedded_pipe=embedded_pipe,
     case_of_application="floor heating",
-    W = 0.10
+    W=0.10,
 )
 
 UFH_D = EmbeddedRadiantSystem(
@@ -25,7 +25,7 @@ UFH_D = EmbeddedRadiantSystem(
     system_type="D",
     embedded_pipe=embedded_pipe,
     case_of_application="floor heating",
-    W = 0.10
+    W=0.10,
 )
 
 for UFH in [UFH_A, UFH_B, UFH_D]:
@@ -34,6 +34,6 @@ for UFH in [UFH_A, UFH_B, UFH_D]:
 
 """
 System A: 88.12 W/m2
-System B: 91.41 W/m2
+System B: 93.92 W/m2
 System D: 99.86 W/m2
 """
