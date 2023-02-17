@@ -598,7 +598,7 @@ def n_G3(K_WL, W):
 
 def alfa(case_of_application="floor heating"):
     """
-    Table A.20 - Additional thermal transfer resistance.
+    Table A.20 - Heat transfer coefficient [W/m2K]
     XYZ This function should not be used for calculating q.
     """
     switcher = {
