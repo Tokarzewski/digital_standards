@@ -19,13 +19,13 @@ class Material:
 class Construction:
     name: str
     materials: list[Material]
-    R_c_op: float = field(init=False)
+    R: float = field(init=False)
 
     def __post_init__(self) -> None:
         if iterable(self.materials):
-            self.R_c_op = sum([material.R for material in self.materials])
+            self.R = sum([material.R for material in self.materials])
         else:
-            self.R_c_op = self.materials.R
+            self.R = self.materials.R
 
 
 @dataclass
@@ -61,7 +61,7 @@ class Transmittance:
     U: float = field(init=False)
 
     def __post_init__(self) -> None:
-        self.R_n = self.construction.R_c_op
+        self.R_n = self.construction.R
 
         # convention - first material is external
         external_material = self.construction.materials[0]
