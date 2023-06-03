@@ -35,7 +35,7 @@ for UFH in [UFH_A, UFH_B, UFH_D]:
     print(UFH.name + ":", round(UFH.q, 2), "W/m2")
 
 """
-System A: 87.97 W/m2
-System B: 93.67 W/m2
-System D: 99.86 W/m2
+System A: 68.59 W/m2
+System B: 69.30 W/m2
+System D: 77.58 W/m2
 """

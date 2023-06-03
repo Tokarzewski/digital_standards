@@ -30,7 +30,7 @@ class EmbeddedRadiantSystem:
 
     # covering
     s_u: float = 0.045  # Thickness of layer above the pipe [m]
-    R_k_B: float = 0.05  # Thermal resistance of the floor covering [m2K/W]
+    R_k_B: float = 0.1  # Thermal resistance of the floor covering [m2K/W]
     k_E: float = 1.8  # Thermal conductivity of screed [W/mK]
     
     # fixing inserts
