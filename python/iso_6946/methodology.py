@@ -38,16 +38,15 @@ class SurfaceResistance:
     R_s: float = field(init=False)
 
     def __post_init__(self) -> None:
-
         if self.boundary == "in":
-            self.h_c = f.h_ci(self.direction)
+            h_c = f.h_ci(self.direction)
         elif self.boundary == "ext":
-            self.h_c = f.h_ce(v=self.wind_speed)
+            h_c = f.h_ce(self.wind_speed)
 
-        self.h_r0 = f.h_r0(T_mn=self.mean_temperature)
-        self.h_r = f.h_r(epsilon=self.material.surface_emissivity, h_r0=self.h_r0)
+        h_r0 = f.h_r0(T_mn=self.mean_temperature)
+        h_r = f.h_r(epsilon=self.material.surface_emissivity, h_r0=h_r0)
 
-        self.R_s = f.R_s(self.h_c, self.h_r)
+        self.R_s = f.R_s(h_c, h_r)
 
 
 @dataclass
@@ -64,16 +63,11 @@ class Transmittance:
     def __post_init__(self) -> None:
         self.R_n = self.construction.R_c_op
 
-        internal_material = self.construction.materials[-1]
+        # convention - first material is external
         external_material = self.construction.materials[0]
+        internal_material = self.construction.materials[-1]
 
-        self.R_si = SurfaceResistance(
-            boundary="in", direction=self.direction, material=internal_material
-        )
-
-        self.R_se = SurfaceResistance(
-            boundary="ext", direction=self.direction, material=external_material
-        )
-
-        self.R_tot = f.R_tot1(R_si=self.R_si.R_s, R_n=self.R_n, R_se=self.R_se.R_s)
+        self.R_si = SurfaceResistance("in", self.direction, internal_material).R_s
+        self.R_se = SurfaceResistance("ext", self.direction, external_material).R_s
+        self.R_tot = f.R_tot1(self.R_si, self.R_n, self.R_se)
         self.U = f.U1(self.R_tot)
