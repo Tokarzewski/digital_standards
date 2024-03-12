@@ -1,0 +1,20 @@
+2023-10-04: Release [V.2.92, 2023-10-04]
+This  contains only a few essential files, after the major upgrading.
+
+2023-10-16: Release [V.2.92, 2023-10-04add]
+The missing demo calculation&result file has been added
+
+2023-11-21: Release [V.2.92, 2023-10-04add2]
+The input data files for BESTEST 900, 940, 600 and 640 have been added, after having made these compatible with the new version. 
+The calculation&result file for case 940 is included as well.
+
+IMPORTANT!! For all BESTEST cases the internal heat gains have been corrected compared to the calculations reported in EN ISO 52016-1:2-17 (now: 4,167 W/m2 instead of 1,453 W/m2 erroneously used in 2017.
+
+
+In the coming weeks or months also the basic files used for the case study on EN ISO 52016-3 will be added, after these have been rerun with the latest version. The changes made after the completion of this case study have no effect on those calculation results; it only changes the presentation/post-processing of the output.
+
+The explanation will also be updated soon.
+
+In case of questions or special requests: dick.vandijk@epb.center
+
+Dick van Dijk

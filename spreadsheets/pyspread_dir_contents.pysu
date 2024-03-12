@@ -1,0 +1,52 @@
+[Pyspread save file version]
+2.0
+[shape]
+100	100	3
+[grid]
+1	0	0	'"iso_6946"'
+1	1	0	'filter_dir(eval(S[X,0,0]+".functions"))'
+0	1	0	'"functions"'
+1	2	0	'filter_dir(eval(S[X,0,0]+".methodology"))'
+0	2	0	'"methodology"'
+2	1	0	'filter_dir(eval(S[X,0,0]+".functions"))'
+2	2	0	'filter_dir(eval(S[X,0,0]+".methodology"))'
+0	0	0	'"standard"'
+3	0	0	'"iso_13370"'
+3	1	0	'filter_dir(eval(S[X,0,0]+".functions"))'
+3	2	0	'filter_dir(eval(S[X,0,0]+".methodology"))'
+4	1	0	'filter_dir(eval(S[X,0,0]+".functions"))'
+4	2	0	'filter_dir(eval(S[X,0,0]+".methodology"))'
+2	0	0	'"en_12831"'
+4	0	0	'"iso_11855"'
+[attributes]
+[]	[]	[]	[]	[(0, 1)]	0	'justification'	'justify_center'	'vertical_align'	'align_center'	'fontweight'	75
+[]	[]	[]	[]	[(0, 2)]	0	'fontweight'	75
+[]	[]	[]	[]	[(0, 1)]	0	'renderer'	'markup'
+[]	[]	[]	[]	[(0, 2)]	0	'justification'	'justify_center'	'vertical_align'	'align_center'
+[(1, 0)]	[(2, 0)]	[]	[]	[]	0	'justification'	'justify_center'	'vertical_align'	'align_center'
+[]	[]	[]	[]	[(0, 0)]	0	'justification'	'justify_center'	'vertical_align'	'align_center'	'fontweight'	75
+[]	[]	[]	[]	[(3, 0)]	0	'justification'	'justify_center'	'vertical_align'	'align_center'
+[]	[]	[]	[]	[(4, 0)]	0	'vertical_align'	'align_center'	'justification'	'justify_center'
+[row_heights]
+0	0	33.333333333333336
+1	0	75.83333333333334
+2	0	154.16666666666669
+3	0	139.16666666666669
+4	0	140.83333333333334
+[col_widths]
+1	0	493.0
+0	0	147.5
+2	0	335.0
+[macros]
+import sys
+
+path_root = "C:\GitHub\digital_standards\python"
+sys.path.append(str(path_root))
+#print(sys.path)
+
+import iso_6946.methodology, en_12831.methodology, iso_13370.methodology
+import iso_11855.methodology
+
+def filter_dir(module):
+    elements = dir(module)
+    return [element for element in elements if "__" not  in element]
